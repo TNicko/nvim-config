@@ -12,6 +12,7 @@ local sources = {
 		filetypes = {
 			"javascript",
 			"typescript",
+			"tsx",
 			"css",
 			"html",
 			"json",
@@ -41,7 +42,7 @@ local sources = {
 	diagnostics.eslint_d.with({
 		-- only enable eslint if root has .eslintrc.js
 		condition = function(utils)
-			return utils.root_has_file(".eslintrc.js") -- change file extension if you use something else
+			return utils.root_has_file(".eslintrc.json") -- change file extension if you use something else
 		end,
 	}),
 }

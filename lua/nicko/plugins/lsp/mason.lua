@@ -1,6 +1,6 @@
 local servers = {
 	"lua_ls",
-	--"tsserver",
+	"tsserver",
 	--"html",
 	"svelte",
 	"pyright",
