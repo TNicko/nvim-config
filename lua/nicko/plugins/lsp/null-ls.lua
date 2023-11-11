@@ -4,7 +4,7 @@ if not null_ls_status then
 end
 
 local formatting = null_ls.builtins.formatting
-local diagnostics = null_ls.builtins.diagnostics
+--local diagnostics = null_ls.builtins.diagnostics
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
 local sources = {
@@ -12,12 +12,17 @@ local sources = {
 		filetypes = {
 			"javascript",
 			"typescript",
-			"tsx",
 			"css",
 			"html",
 			"json",
 			"markdown",
 			"svelte",
+			"yaml",
+			"markdown",
+			"txt",
+			"react",
+			"md",
+			"typescriptreact",
 		},
 		disabled_filetypes = { "python" },
 		extra_args = {
@@ -39,12 +44,12 @@ local sources = {
 	}),
 	formatting.stylua,
 	--diagnostics.flake8,
-	diagnostics.eslint_d.with({
-		-- only enable eslint if root has .eslintrc.js
-		condition = function(utils)
-			return utils.root_has_file(".eslintrc.json") -- change file extension if you use something else
-		end,
-	}),
+	--diagnostics.eslint_d.with({
+	---- only enable eslint if root has .eslintrc.js
+	--condition = function(utils)
+	--return utils.root_has_file(".eslintrc.json") -- change file extension if you use something else
+	--end,
+	--}),
 }
 
 null_ls.setup({
@@ -59,11 +64,11 @@ null_ls.setup({
 				buffer = bufnr,
 				callback = function()
 					vim.lsp.buf.format({
+						bufnr = bufnr,
 						filter = function(client)
 							--  only use null-ls for formatting instead of lsp server
 							return client.name == "null-ls"
 						end,
-						bufnr = bufnr,
 					})
 				end,
 			})
