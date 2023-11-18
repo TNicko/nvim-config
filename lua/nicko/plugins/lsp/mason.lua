@@ -1,6 +1,7 @@
 local servers = {
 	"lua_ls",
 	"tsserver",
+	--"rust_analyzer",
 	--"html",
 	"svelte",
 	"pyright",
