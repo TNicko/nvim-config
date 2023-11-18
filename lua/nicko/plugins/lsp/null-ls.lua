@@ -42,6 +42,7 @@ local sources = {
 			--"--experimental-string-processing",
 		},
 	}),
+	formatting.rustfmt,
 	formatting.stylua,
 	--diagnostics.flake8,
 	--diagnostics.eslint_d.with({
