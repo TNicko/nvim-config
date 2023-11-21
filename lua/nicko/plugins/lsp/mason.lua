@@ -1,7 +1,7 @@
 local servers = {
 	"lua_ls",
 	"tsserver",
-	--"rust_analyzer",
+	"rust_analyzer",
 	--"html",
 	"svelte",
 	"pyright",
@@ -11,6 +11,11 @@ local servers = {
 	--"bashls",
 	--"yamlls",
 }
+
+local setup, rt = pcall(require, "rust-tools")
+if not setup then
+	return
+end
 
 require("mason").setup()
 require("mason-lspconfig").setup({
@@ -25,18 +30,41 @@ end
 
 local opts = {}
 
+local lsp_config = require("nicko.plugins.lsp.lspconfig")
+
 for _, server in pairs(servers) do
 	opts = {
-		on_attach = require("nicko.plugins.lsp.lspconfig").on_attach,
-		capabilities = require("nicko.plugins.lsp.lspconfig").capabilities,
+		on_attach = lsp_config.on_attach,
+		capabilities = lsp_config.capabilities,
 	}
 
 	server = vim.split(server, "@")[1]
 
-	local require_ok, conf_opts = pcall(require, "nicko.plugins.lsp.settings." .. server)
-	if require_ok then
-		opts = vim.tbl_deep_extend("force", conf_opts, opts)
+	if server == "rust_analyzer" then
+		rt.setup({
+			server = vim.tbl_deep_extend("force", {
+				on_attach = function(_, bufnr)
+					lsp_config.on_attach(_, bufnr)
+				end,
+				settings = {
+					["rust-analyzer"] = {
+						checkOnSave = {
+							command = "clippy",
+						},
+					},
+				},
+			}, opts),
+			tools = {
+				hover_actions = {
+					auto_focus = true,
+				},
+			},
+		})
+	else
+		local require_ok, conf_opts = pcall(require, "nicko.plugins.lsp.settings." .. server)
+		if require_ok then
+			opts = vim.tbl_deep_extend("force", conf_opts, opts)
+		end
+		lspconfig[server].setup(opts)
 	end
-
-	lspconfig[server].setup(opts)
 end
