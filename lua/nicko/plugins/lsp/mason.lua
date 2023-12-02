@@ -40,31 +40,9 @@ for _, server in pairs(servers) do
 
 	server = vim.split(server, "@")[1]
 
-	if server == "rust_analyzer" then
-		rt.setup({
-			server = vim.tbl_deep_extend("force", {
-				on_attach = function(_, bufnr)
-					lsp_config.on_attach(_, bufnr)
-				end,
-				settings = {
-					["rust-analyzer"] = {
-						checkOnSave = {
-							command = "clippy",
-						},
-					},
-				},
-			}, opts),
-			tools = {
-				hover_actions = {
-					auto_focus = true,
-				},
-			},
-		})
-	else
-		local require_ok, conf_opts = pcall(require, "nicko.plugins.lsp.settings." .. server)
-		if require_ok then
-			opts = vim.tbl_deep_extend("force", conf_opts, opts)
-		end
-		lspconfig[server].setup(opts)
+	local require_ok, conf_opts = pcall(require, "nicko.plugins.lsp.settings." .. server)
+	if require_ok then
+		opts = vim.tbl_deep_extend("force", conf_opts, opts)
 	end
+	lspconfig[server].setup(opts)
 end
