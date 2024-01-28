@@ -13,6 +13,7 @@ local sources = {
 			"javascript",
 			"typescript",
 			"css",
+			"sql",
 			"html",
 			"json",
 			"markdown",
@@ -44,6 +45,7 @@ local sources = {
 	}),
 	formatting.rustfmt,
 	formatting.stylua,
+	formatting.sql_formatter,
 	--diagnostics.flake8,
 	--diagnostics.eslint_d.with({
 	---- only enable eslint if root has .eslintrc.js
