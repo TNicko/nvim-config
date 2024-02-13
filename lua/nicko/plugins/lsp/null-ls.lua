@@ -24,6 +24,7 @@ local sources = {
 			"react",
 			"md",
 			"typescriptreact",
+      "javascriptreact",
 		},
 		disabled_filetypes = { "python" },
 		extra_args = {
