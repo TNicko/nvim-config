@@ -69,7 +69,7 @@ local prettier_servers = {
 	["tsserver"] = true,
 	["html"] = true,
 	["cssls"] = true,
-	["pyright"] = true
+	["pyright"] = true,
 }
 
 local format_is_enabled = true
@@ -78,6 +78,11 @@ vim.api.nvim_create_user_command('KickstartFormatToggle', function()
 	print('Setting autoformatting to: ' .. tostring(format_is_enabled))
 end, {})
 
+local function format_with_black(bufnr)
+	local black_cmd = "black " .. vim.api.nvim_buf_get_name(bufnr)
+	vim.fn.system(black_cmd)
+	vim.cmd("edit!")
+end
 
 local function format_with_prettier(bufnr)
 	local prettier_cmd = "prettier --write " .. vim.api.nvim_buf_get_name(bufnr)
@@ -123,7 +128,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 				if not format_is_enabled then
 					return
 				end
-				if prettier_servers[client.name] then
+				if client.name == "pyright" then
+					format_with_black(bufnr)
+				elseif prettier_servers[client.name] then
 					format_with_prettier(bufnr)
 					return
 				end
