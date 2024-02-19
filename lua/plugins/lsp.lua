@@ -19,12 +19,12 @@ require("mason-lspconfig").setup({
 
 for _, server in pairs(servers) do
 	if server == "pyright" then
-		require('lspconfig')[server].setup {
+		require('lspconfig')["pyright"].setup {
 			capabilities = capabilities,
 			settings = {
 				python = {
 					analysis = {
-						typeCheckingMode = "off",
+						typeCheckingMode = "on",
 					}
 				}
 			}
@@ -82,7 +82,6 @@ local prettier_servers = {
 	["tsserver"] = true,
 	["html"] = true,
 	["cssls"] = true,
-	["pyright"] = true,
 }
 
 local format_is_enabled = true
@@ -90,18 +89,6 @@ vim.api.nvim_create_user_command('KickstartFormatToggle', function()
 	format_is_enabled = not format_is_enabled
 	print('Setting autoformatting to: ' .. tostring(format_is_enabled))
 end, {})
-
-local function format_with_black(bufnr)
-	local black_cmd = "black " .. vim.api.nvim_buf_get_name(bufnr)
-	vim.fn.system(black_cmd)
-	vim.cmd("edit!")
-end
-
-local function format_with_prettier(bufnr)
-	local prettier_cmd = "prettier --write " .. vim.api.nvim_buf_get_name(bufnr)
-	vim.fn.system(prettier_cmd) -- Pass the command directly as a string
-	vim.cmd("edit!")
-end
 
 -- Augroup used for managing our formatting autocmds.
 local _augroups = {}
@@ -122,13 +109,45 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		local client = vim.lsp.get_client_by_id(client_id)
 		local bufnr = args.buf
 
-		-- Only attach to clients that support document formatting
-		if not prettier_servers[client.name] and not client.server_capabilities.documentFormattingProvider then
+
+		if client.name == "pyright" then
+			vim.api.nvim_create_autocmd(
+				"BufWritePost", {
+					group = get_augroup(client),
+					buffer = bufnr,
+					callback = function()
+						task = vim.cmd("silent !black --quiet %")
+						vim.cmd("edit!")
+					end,
+				}
+			)
+			return
+		end
+
+
+		if prettier_servers[client.name] then
+			vim.api.nvim_create_autocmd(
+				"BufWritePost", {
+					group = get_augroup(client),
+					buffer = bufnr,
+					callback = function()
+						local prettier_cmd = "prettier --write " .. vim.api.nvim_buf_get_name(bufnr)
+						vim.fn.system(prettier_cmd) -- Pass the command directly as a string
+						vim.cmd("edit!")
+					end,
+				}
+			)
 			return
 		end
 
 		-- tsserver usually works poorly, so disabled
 		if client.name == 'tsserver' then
+			return
+		end
+
+
+		-- Only attach to clients that support document formatting
+		if not client.server_capabilities.documentFormattingProvider then
 			return
 		end
 
@@ -139,13 +158,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 			buffer = bufnr,
 			callback = function()
 				if not format_is_enabled then
-					return
-				end
-				if client.name == "pyright" then
-					format_with_black(bufnr)
-					return
-				elseif prettier_servers[client.name] then
-					format_with_prettier(bufnr)
 					return
 				end
 
