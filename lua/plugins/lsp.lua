@@ -18,9 +18,22 @@ require("mason-lspconfig").setup({
 })
 
 for _, server in pairs(servers) do
-	require('lspconfig')[server].setup {
-		capabilities = capabilities,
-	}
+	if server == "pyright" then
+		require('lspconfig')[server].setup {
+			capabilities = capabilities,
+			settings = {
+				python = {
+					analysis = {
+						typeCheckingMode = "off",
+					}
+				}
+			}
+		}
+	else
+		require('lspconfig')[server].setup {
+			capabilities = capabilities,
+		}
+	end
 end
 
 -- LspAttach autocommand to only map the following keys
@@ -130,6 +143,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 				end
 				if client.name == "pyright" then
 					format_with_black(bufnr)
+					return
 				elseif prettier_servers[client.name] then
 					format_with_prettier(bufnr)
 					return
