@@ -24,7 +24,7 @@ for _, server in pairs(servers) do
 			settings = {
 				python = {
 					analysis = {
-						typeCheckingMode = "on",
+						typeCheckingMode = "off",
 					}
 				}
 			}
@@ -116,7 +116,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 					group = get_augroup(client),
 					buffer = bufnr,
 					callback = function()
-						task = vim.cmd("silent !black --quiet %")
+						local black_cmd = "black --quiet --fast --line-length 79 " ..
+								vim.api.nvim_buf_get_name(bufnr)
+						vim.fn.system(black_cmd)
 						vim.cmd("edit!")
 					end,
 				}
