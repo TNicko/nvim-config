@@ -84,7 +84,7 @@ local prettier_servers = {
 	["cssls"] = true,
 }
 
-local format_is_enabled = true
+local format_is_enabled = false
 vim.api.nvim_create_user_command('KickstartFormatToggle', function()
 	format_is_enabled = not format_is_enabled
 	print('Setting autoformatting to: ' .. tostring(format_is_enabled))
@@ -116,6 +116,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 					group = get_augroup(client),
 					buffer = bufnr,
 					callback = function()
+						if not format_is_enabled then
+							return
+						end
 						local black_cmd = "black --quiet --fast --line-length 79 " ..
 								vim.api.nvim_buf_get_name(bufnr)
 						vim.fn.system(black_cmd)
@@ -133,6 +136,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 					group = get_augroup(client),
 					buffer = bufnr,
 					callback = function()
+						if not format_is_enabled then
+							return
+						end
 						local prettier_cmd = "prettier --write " .. vim.api.nvim_buf_get_name(bufnr)
 						vim.fn.system(prettier_cmd) -- Pass the command directly as a string
 						vim.cmd("edit!")

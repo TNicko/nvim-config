@@ -20,6 +20,6 @@ require("nvim-tree").setup({
 	filters = {
 		dotfiles = false,
 		git_ignored = false,
-		custom = { ".git", "node_modules", ".cache" },
+		--custom = { ".git", "node_modules", ".cache" },
 	},
 })
