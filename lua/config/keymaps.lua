@@ -12,6 +12,11 @@ keymap.set("n", "x", '"_x')
 keymap.set("n", "n", "nzzzv")
 keymap.set("n", "N", "Nzzzv")
 
+
+-- move highlighted lines
+keymap.set("v", "I", ":m '<-2<CR>gv=gv")
+keymap.set("v", "K", ":m '>+1<CR>gv=gv")
+
 -- replace all instances of current word
 keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
@@ -34,9 +39,43 @@ keymap.set("i", "<Esc>C]", "<C-o>:w<CR>")
 keymap.set("n", "<M-Up>", "<C-u>zz")
 keymap.set("n", "<M-Down>", "<C-d>zz")
 
+-- move to end of line
+keymap.set("i", "<Esc>]C", "<End>")
+keymap.set("n", "<Esc>]C", "<End>")
+keymap.set("v", "<Esc>]C", "<End>")
+
+-- move to beginning of line
+keymap.set("i", "<Esc>]A", "<C-o>_")
+keymap.set("n", "<Esc>]A", "_")
+keymap.set("v", "<Esc>]A", "_")
+
 -- redo
-keymap.set("n", "<Esc>C]", ":w<CR>")
-keymap.set("i", "<Esc>C]", "<C-o>:w<CR>")
+keymap.set("n", "<Esc>D]", "<C-r>")
+keymap.set("i", "<Esc>D]", "<C-o><C-r>")
+
+-- move to next/previous word
+keymap.set("n", "<M-Right>", "<S-Right>")
+keymap.set("n", "<M-Left>", "<S-Left>")
+keymap.set("i", "<M-Right>", "<S-Right>")
+keymap.set("i", "<M-Left>", "<S-Left>")
+keymap.set("v", "<M-Right>", "<S-Right>")
+keymap.set("v", "<M-Left>", "<S-Left>")
+
+-- move to top of file
+keymap.set("i", "<Esc>]D", "<C-Home>")
+keymap.set("n", "<Esc>]D", "<C-Home>")
+keymap.set("v", "<Esc>]D", "<C-Home>")
+
+-- move to bottom of file
+keymap.set("i", "<Esc>]E", "<C-o>G")
+keymap.set("n", "<Esc>]E", "G")
+keymap.set("v", "<Esc>]E", "G")
+
+-- move between tabs
+keymap.set("n", "<S-right>", "<C-w>l")
+keymap.set("n", "<S-left>", "<C-w>h")
+keymap.set("n", "<S-up>", "<C-w>k")
+keymap.set("n", "<S-down>", "<C-w>j")
 
 ----------------------
 -- plugin keymaps
