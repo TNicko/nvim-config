@@ -32,8 +32,8 @@ keymap.set("n", "<Esc>]H", ":wq<CR>")
 keymap.set("i", "<Esc>]H", "<C-o>:wq<CR>")
 
 -- save only
-keymap.set("n", "<Esc>C]", ":w<CR>")
-keymap.set("i", "<Esc>C]", "<C-o>:w<CR>")
+keymap.set("n", "<Esc>C[", ":w<CR>")
+keymap.set("i", "<Esc>C[", "<C-o>:w<CR>")
 
 -- move down multiple lines at a time
 keymap.set("n", "<M-Up>", "<C-u>zz")

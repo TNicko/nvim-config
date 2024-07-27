@@ -25,6 +25,8 @@ for _, server in pairs(servers) do
 				python = {
 					analysis = {
 						typeCheckingMode = "off",
+						autoSearchPaths = true,
+						extraPaths = {"./"},
 					}
 				}
 			}

@@ -93,4 +93,14 @@ require("lazy").setup({
 			require("plugins.autopairs")
 		end,
 	},
+	{
+		"akinsho/flutter-tools.nvim",
+		lazy = false,
+		dependencies = {
+			"plenary"
+		},
+		config = function()
+			require("plugins.flutter")
+		end,
+	},
 })
