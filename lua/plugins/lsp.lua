@@ -2,40 +2,29 @@ local servers = {
 	"lua_ls",
 	"rust_analyzer",
 	"pyright",
-	"tsserver",
+	"ts_ls",
 }
 
-local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
-
-require("mason").setup()
-require("mason-lspconfig").setup({
-	ensure_installed = servers,
-	handlers = {
-		function(server_name)
-			require("lspconfig")[server_name].setup {}
-		end,
-	},
-})
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 for _, server in pairs(servers) do
+	local opts = {
+		capabilities = capabilities,
+	}
+
 	if server == "pyright" then
-		require('lspconfig')["pyright"].setup {
-			capabilities = capabilities,
-			settings = {
-				python = {
-					analysis = {
-						typeCheckingMode = "off",
-						autoSearchPaths = true,
-						extraPaths = {"./"},
-					}
-				}
-			}
-		}
-	else
-		require('lspconfig')[server].setup {
-			capabilities = capabilities,
+		opts.settings = {
+			python = {
+				analysis = {
+					typeCheckingMode = "off",
+					autoSearchPaths = true,
+					extraPaths = {"./"},
+				},
+			},
 		}
 	end
+
+	require("lspconfig")[server].setup(opts)
 end
 
 -- LspAttach autocommand to only map the following keys
@@ -81,7 +70,7 @@ vim.diagnostic.config(config)
 -- Formatting
 
 local prettier_servers = {
-	["tsserver"] = true,
+	["ts_ls"] = true,
 	["html"] = true,
 	["cssls"] = true,
 }
@@ -150,8 +139,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
 			return
 		end
 
-		-- tsserver usually works poorly, so disabled
-		if client.name == 'tsserver' then
+		-- ts_ls usually works poorly, so disabled
+		if client.name == 'ts_ls' then
 			return
 		end
 
