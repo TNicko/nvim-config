@@ -1,24 +1,48 @@
+local lspconfig = require("lspconfig")
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 local servers = {
 	"lua_ls",
 	"rust_analyzer",
 	"pyright",
 	"ts_ls",
+	"jdtls"
+	--"sqlls"
 }
-
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 for _, server in pairs(servers) do
 	local opts = {
 		capabilities = capabilities,
 	}
 
+	--if server == "pyright" then
+		--opts.settings = {
+			--python = {
+				--analysis = {
+					--typeCheckingMode = "off",
+					--autoSearchPaths = true,
+					--venvPath = ".",
+					--venv = ".venv",
+					--extraPaths = { "./" },
+				--},
+			--},
+		--}
+	--end
 	if server == "pyright" then
+		opts.root_dir = function(fname)
+			local root = vim.fs.find("pyrightconfig.json", { path = fname, upward = true })[1]
+			if root then
+				return vim.fs.dirname(root)
+			end
+			-- fallback if no pyrightconfig.json
+			return require("lspconfig.util").root_pattern("pyproject.toml")(fname)
+		end
+
 		opts.settings = {
 			python = {
 				analysis = {
 					typeCheckingMode = "off",
-					autoSearchPaths = true,
-					extraPaths = {"./"},
+					diagnosticMode = "openFilesOnly", -- keep if you want; optional
 				},
 			},
 		}
